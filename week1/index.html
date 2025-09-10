@@ -1,10 +1,481 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Test Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Desire Factor - Week 1: Desire Mapping Journey</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F59E0B 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: sparkle 20s linear infinite;
+        }
+
+        @keyframes sparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            padding: 30px;
+            background: linear-gradient(90deg, #f8fafc 0%, #e2e8f0 100%);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8B5CF6, #EC4899);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 6px;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+            border-radius: 15px;
+            border-left: 5px solid #8B5CF6;
+        }
+
+        .intro-section h2 {
+            color: #7c3aed;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .intro-section p {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+
+        .category-container {
+            display: none;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .category-container.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .category-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .category-description {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .questions-grid {
+            display: grid;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #8B5CF6;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .question-label {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            line-height: 1.4;
+        }
+
+        .question-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .question-textarea:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            display: none;
+            padding: 40px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .results-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .results-header h2 {
+            color: #0369a1;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .desire-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid;
+        }
+
+        .summary-card:nth-child(1) { border-top-color: #ef4444; }
+        .summary-card:nth-child(2) { border-top-color: #f59e0b; }
+        .summary-card:nth-child(3) { border-top-color: #10b981; }
+        .summary-card:nth-child(4) { border-top-color: #3b82f6; }
+        .summary-card:nth-child(5) { border-top-color: #8b5cf6; }
+        .summary-card:nth-child(6) { border-top-color: #ec4899; }
+
+        .summary-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .summary-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1a202c;
+        }
+
+        .desire-list {
+            list-style: none;
+        }
+
+        .desire-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+            line-height: 1.4;
+        }
+
+        .desire-list li:last-child {
+            border-bottom: none;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+            border-radius: 15px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .questions-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+
+        .completion-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .indicator-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: background 0.3s ease;
+        }
+
+        .indicator-dot.completed {
+            background: #10b981;
+        }
+
+        .indicator-dot.current {
+            background: #8B5CF6;
+            transform: scale(1.2);
+        }
+    </style>
 </head>
 <body>
-    <h1>SUCCESS! GitHub Pages is Working!</h1>
-    <p>If you see this, the path is correct.</p>
-</body>
-</html>
+    <div class="container">
+        <div class="header">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 10px;">
+                    The Desire Factor Coaching Program • Week 1
+                </div>
+                <div style="font-size: 0.8rem; opacity: 0.8;">
+                    mindfulmotivation.net
+                </div>
+            </div>
+            <h1>✨ Your Desire Mapping Journey ✨</h1>
+            <p>Discover what your heart truly wants across all areas of your life</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">Getting Started...</div>
+            <div class="completion-indicator" id="completionIndicator">
+                <div class="indicator-dot current"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+                <div class="indicator-dot"></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="intro-section" id="introSection">
+                <h2>Welcome to Your Transformation Journey</h2>
+                <p>You're about to embark on a powerful journey of self-discovery. This comprehensive desire mapping process will help you identify what truly matters to you across six key areas of life. Take your time with each section, be honest with yourself, and let your authentic desires emerge.</p>
+                <br>
+                <p><strong>Remember:</strong> There are no wrong answers. Your desires are sacred gifts from your Divine Self, pointing you toward your highest expression and greatest joy.</p>
+                <div style="margin-top: 30px;">
+                    <button class="btn btn-primary" onclick="startMapping()">
+                        Begin Your Desire Map ✨
+                    </button>
+                </div>
+            </div>
+
+            <!-- Category Sections -->
+            <div class="category-container" id="category-0">
+                <div class="category-header">
+                    <div class="category-icon">💫</div>
+                    <div class="category-title">Well-Being & Body Desires</div>
+                    <div class="category-description">How you want to feel physically, mentally, and energetically each day</div>
+                </div>
+                <div class="questions-grid">
+                    <div class="question-card">
+                        <label class="question-label">How do I want to feel physically each day?</label>
+                        <textarea class="question-textarea" data-category="0" data-question="0" placeholder="Describe your ideal physical state - energy levels, strength, vitality..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <label class="question-label">What would my ideal body, health, or energy level look like?</label>
+                        <textarea class="question-textarea" data-category="0" data-question="1" placeholder="Paint a picture of your healthiest, most vibrant self..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <label class="question-label">What kind of daily routines, nutrition, or movement would feel nourishing and joyful to me?</label>
+                        <textarea class="question-textarea" data-category="0" data-question="2" placeholder="Describe routines that would make you feel amazing..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <label class="question-label">How do I want to look in the mirror and feel in my clothes?</label>
+                        <textarea class="question-textarea" data-category="0" data-question="3" placeholder="Express how you want to feel about your physical appearance..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-container" id="category-1">
+                <div class="category-header">
+                    <div class="category-icon">💰</div>
+                    <div class="category-title">Financial Desires</div>
+                    <div class="category-description">Your relationship with money, abundance, and financial freedom</div>
+                </div>
+                <div class="questions-grid">
+                    <div class="question-card">
+                        <label class="question-label">What amount of money would feel abundant and secure for me right now?</label>
+                        <textarea class="question-textarea" data-category="1" data-question="0" placeholder="Be specific about numbers and what they would provide..."></textarea>
+                    </div>
+                    <div class="question-card">
+                        <label class="question-label">How would I love to earn, save, invest, or spend money?</label>
+                        <textarea class="question-textarea" data-category="1" data-question="1" placeholder="Describe your ideal relationship with money flow...">
