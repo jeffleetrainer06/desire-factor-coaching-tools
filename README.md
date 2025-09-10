@@ -34,3 +34,13 @@ Based on Christy Whitman's proven methodology combining spiritual principles wit
 
 ---
 *Created for mindfulmotivation.net coaching programs*
+### Week 1: Desire Mapping Journey
+**[Launch Tool →](https://jeffleetrainer06.github.io/desire-factor-coaching-tools/week1/)**
+
+Complete desire assessment across 6 life categories:
+- 💫 Well-Being & Body Desires
+- 💰 Financial Desires  
+- 🚀 Success & Project Desires
+- 💕 Relationship Desires
+- 🌟 Social Desires
+- 🙏 Spiritual Desires
