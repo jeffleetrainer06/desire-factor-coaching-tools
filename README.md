@@ -49,3 +49,7 @@ Based on Christy Whitman's proven methodology combining spiritual principles wit
 
 ---
 *Created for mindfulmotivation.net coaching programs*
+### Coming Soon:
+- Week 3: Focus Tracker
+- Week 4: Expectancy Mood Board
+- Weeks 5-8: Advanced manifestation tools
