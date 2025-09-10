@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Desire Factor - Week 2: Alignment Meter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 50%, #F59E0B 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: sparkle 20s linear infinite;
+        }
+
+        @keyframes sparkle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .intro-section {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+            border-radius: 15px;
+            border-left: 5px solid #8B5CF6;
+        }
+
+        .intro-section h2 {
+            color: #7c3aed;
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+
+        .intro-section p {
+            color: #4a5568;
+            line-height: 1.6;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .alignment-form {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .form-header h3 {
+            color: #1a202c;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .form-header p {
+            color: #718096;
+            font-size: 1.1rem;
+        }
+
+        .alignment-areas {
+            display: grid;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .alignment-area {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 4px solid #8B5CF6;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .alignment-area:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .area-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .area-icon {
+            font-size: 2rem;
+            margin-right: 15px;
+        }
+
+        .area-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .alignment-slider-container {
+            margin-bottom: 20px;
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #718096;
+        }
+
+        .alignment-slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #ef4444, #f59e0b, #10b981, #059669, #047857);
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .alignment-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        .alignment-slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #2d3748;
+        }
+
+        .reflection-prompt {
+            margin-top: 15px;
+        }
+
+        .reflection-prompt label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .reflection-input {
+            width: 100%;
+            min-height: 80px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: vertical;
+            transition: border-color 0.3s ease;
+        }
+
+        .reflection-input:focus {
+            outline: none;
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f7fafc;
+            color: #4a5568;
+            border: 2px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #edf2f7;
+            border-color: #cbd5e0;
+        }
+
+        .dashboard {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .dashboard.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 15px;
+        }
+
+        .dashboard-header h2 {
+            color: #0369a1;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-header p {
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-top: 4px solid;
+        }
+
+        .stat-card:nth-child(1) { border-top-color: #8B5CF6; }
+        .stat-card:nth-child(2) { border-top-color: #EC4899; }
+        .stat-card:nth-child(3) { border-top-color: #F59E0B; }
+        .stat-card:nth-child(4) { border-top-color: #10B981; }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .chart-header h3 {
+            color: #1a202c;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .recent-entries {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .recent-entries h3 {
+            color: #1a202c;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .entry-item {
+            padding: 15px;
+            border-left: 4px solid #8B5CF6;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .entry-date {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .entry-scores {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .score-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .score-1 { background: #ef4444; }
+        .score-2 { background: #f59e0b; }
+        .score-3 { background: #10b981; }
+        .score-4 { background: #059669; }
+        .score-5 { background: #047857; }
+
+        .weekly-reflection {
+            background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border-left: 5px solid #8B5CF6;
+        }
+
+        .weekly-reflection h3 {
+            color: #7c3aed;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .reflection-questions {
+            display: grid;
+            gap: 20px;
+        }
+
+        .reflection-question {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .reflection-question label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .reflection-question textarea {
+            width: 100%;
+            min-height: 100px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 0.95rem;
+            resize: vertical;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #fef7ff 0%, #f3e8ff 100%);
+            border-radius: 15px;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-info">
+                The Desire Factor Coaching Program • Week 2<br>
+                <span style="font-size: 0.8rem;">mindfulmotivation.net</span>
+            </div>
+            <h1>⚖️ Your Daily Alignment Meter ⚖️</h1>
+            <p>Track your emotional and energetic alignment with your deepest desires</p>
+        </div>
+
+        <div class="main-content">
+            <div class="intro-section">
+                <h2>Welcome to Week 2: The Principle of Alignment</h2>
+                <p>Alignment is the place where inner work meets outer manifestation. When you're in alignment, you feel good, and when you feel good, you're open to receiving your desires.</p>
+                <p><strong>Today's Practice:</strong> Rate your current alignment in each life area, reflect on what's influencing your state, and track your progress over time.</p>
+                <p><em>Remember: There are no perfect scores. This is about awareness, not judgment.</em></p>
+            </div>
+
+            <!-- Daily Alignment Form -->
+            <div class="alignment-form" id="alignmentForm">
+                <div class="form-header">
+                    <h3>How Aligned Are You Feeling Today?</h3>
+                    <p>Rate each area from 1 (completely out of alignment) to 5 (perfectly aligned)</p>
+                </div>
+
+                <div class="alignment-areas">
+                    <div class="alignment-area">
+                        <div class="area-header">
+                            <div class="area-icon">✨</div>
+                            <div class="area-title">Core Desires from Week 1</div>
+                        </div>
+                        <div class="alignment-slider-container">
+                            <div class="slider-labels">
+                                <span>Out of Alignment</span>
+                                <span>Neutral</span>
+                                <span>Fully Aligned</span>
+                            </div>
+                            <input type="range" class="alignment-slider" id="coreDesires" min="1" max="5" value="3">
+                            <div class="slider-value" id="coreDesires-value">3 - Neutral</div>
+                        </div>
+                        <div class="reflection-prompt">
+                            <label>What's influencing your alignment with your core desires today?</label>
+                            <textarea class="reflection-input" id="coreDesires-reflection" placeholder="Optional: Share what's supporting or blocking your alignment..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alignment-area">
+                        <div class="area-header">
+                            <div class="area-icon">👨‍👩‍👧‍👦</div>
+                            <div class="area-title">Family Relationships</div>
+                        </div>
+                        <div class="alignment-slider-container">
+                            <div class="slider-labels">
+                                <span>Disconnected</span>
+                                <span>Neutral</span>
+                                <span>Harmonious</span>
+                            </div>
+                            <input type="range" class="alignment-slider" id="family" min="1" max="5" value="3">
+                            <div class="slider-value" id="family-value">3 - Neutral</div>
+                        </div>
+                        <div class="reflection-prompt">
+                            <label>How are your family connections feeling today?</label>
+                            <textarea class="reflection-input" id="family-reflection" placeholder="What's working well or needs attention in your family relationships?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alignment-area">
+                        <div class="area-header">
+                            <div class="area-icon">💼</div>
+                            <div class="area-title">Work & Career</div>
+                        </div>
+                        <div class="alignment-slider-container">
+                            <div class="slider-labels">
+                                <span>Draining</span>
+                                <span>Neutral</span>
+                                <span>Fulfilling</span>
+                            </div>
+                            <input type="range" class="alignment-slider" id="work" min="1" max="5" value="3">
+                            <div class="slider-value" id="work-value">3 - Neutral</div>
+                        </div>
+                        <div class="reflection-prompt">
+                            <label>How aligned do you feel with your work today?</label>
+                            <textarea class="reflection-input" id="work-reflection" placeholder="What aspects of work are energizing or depleting you?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alignment-area">
+                        <div class="area-header">
+                            <div class="area-icon">🤝</div>
+                            <div class="area-title">Other Relationships</div>
+                        </div>
+                        <div class="alignment-slider-container">
+                            <div class="slider-labels">
+                                <span>Strained</span>
+                                <span>Neutral</span>
+                                <span>Supportive</span>
+                            </div>
+                            <input type="range" class="alignment-slider" id="relationships" min="1" max="5" value="3">
+                            <div class="slider-value" id="relationships-value">3 - Neutral</div>
+                        </div>
+                        <div class="reflection-prompt">
+                            <label>How are your friendships and other connections?</label>
+                            <textarea class="reflection-input" id="relationships-reflection" placeholder="What's happening in your social connections and friendships?"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="alignment-area">
+                        <div class="area-header">
+                            <div class="area-icon">🌟</div>
+                            <div class="area-title">Personal Satisfaction</div>
+                        </div>
+                        <div class="alignment-slider-container">
+                            <div class="slider-labels">
+                                <span>Unfulfilled</span>
+                                <span>Neutral</span>
+                                <span>Thriving</span>
+                            </div>
+                            <input type="range" class="alignment-slider" id="personal" min="1" max="5" value="3">
+                            <div class="slider-value" id="personal-value">3 - Neutral</div>
+                        </div>
+                        <div class="reflection-prompt">
+                            <label>How satisfied do you feel with your personal growth and self-care?</label>
+                            <textarea class="reflection-input" id="personal-reflection" placeholder="What's supporting or challenging your personal satisfaction today?"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="submit-section">
+                    <button class="btn btn-primary" onclick="submitAlignment()">
+                        📊 Record Today's Alignment
+                    </button>
+                    <button class="btn btn-secondary" onclick="showDashboard()">
+                        📈 View My Progress
+                    </button>
+                </div>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <h3>✅ Alignment Recorded Successfully!</h3>
+                <p>Your daily check-in has been saved. Keep building awareness of your alignment patterns.</p>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="dashboard" id="dashboard">
+                <div class="dashboard-header">
+                    <h2>📈 Your Alignment Dashboard</h2>
+                    <p>Track your progress and discover patterns in your alignment journey</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalEntries">0</div>
+                        <div class="stat-label">Total Check-ins</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="averageAlignment">0.0</div>
+                        <div class="stat-label">Average Alignment</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="highestArea">-</div>
+                        <div class="stat-label">Strongest Area</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="improvementArea">-</div>
+                        <div class="stat-label">Growth Opportunity</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Weekly Alignment Trends</h3>
+                        <p>See how your alignment has evolved over time</p>
+                    </div>
+                    <canvas id="alignmentChart" width="400" height="200"></canvas>
+                </div>
+
+                <div class="recent-entries">
+                    <h3>Recent Check-ins</h3>
+                    <div id="recentEntriesList">
+                        <p style="text-align: center; color: #718096; font-style: italic;">No entries yet. Complete your first alignment check-in above!</p>
+                    </div>
+                </div>
+
+                <div class="weekly-reflection">
+                    <h3>📝 Weekly Reflection</h3>
+                    <p style="text-align: center; margin-bottom: 25px; color: #4a5568;">Take a moment to reflect on your alignment patterns this week</p>
+                    
+                    <div class="reflection-questions">
+                        <div class="reflection-question">
+                            <label>What helped you feel most aligned this week?</label>
+                            <textarea id="weeklyHelpful" placeholder="Reflect on the people, activities, or mindsets that supported your alignment..."></textarea>
+                        </div>
+                        <div class="reflection-question">
+                            <label>What was your biggest alignment challenge?</label>
+                            <textarea id="weeklyChallenge" placeholder="What patterns or situations pulled you out of alignment?"></textarea>
+                        </div>
+                        <div class="reflection-question">
+                            <label>What one thing will you focus on improving next week?</label>
+                            <textarea id="weeklyFocus" placeholder="Choose one area or practice to focus on for better alignment..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 25px;">
+                        <button class="btn btn-primary" onclick="saveWeeklyReflection()">
+                            💾 Save Weekly Reflection
+                        </button>
+                    </div>
+                </div>
+
+                <div class="download-section">
+                    <h3 style="margin-bottom: 20px; color: #7c3aed;">Share Your Progress</h3>
+                    <p style="margin-bottom: 30px; color: #4a5568;">Download your alignment data to discuss with your coach</p>
+                    <button class="download-btn" onclick="downloadProgress()">
+                        📄 Download Alignment Report
+                    </button>
+                    <button class="download-btn" onclick="goBackToForm()">
+                        ⬅️ Back to Daily Check-in
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const alignmentData = JSON.parse(localStorage.getItem('alignmentData')) || [];
+        const weeklyReflections = JSON.parse(localStorage.getItem('weeklyReflections')) || [];
+
+        const areas = [
+            { id: 'coreDesires', name: 'Core Desires', icon: '✨' },
+            { id: 'family', name: 'Family', icon: '👨‍👩‍👧‍👦' },
+            { id: 'work', name: 'Work', icon: '💼' },
+            { id: 'relationships', name: 'Relationships', icon: '🤝' },
+            { id: 'personal', name: 'Personal', icon: '🌟' }
+        ];
+
+        const scoreLabels = {
+            1: '1 - Out of Alignment',
+            2: '2 - Somewhat Off',
+            3: '3 - Neutral',
+            4: '4 - Well Aligned',
+            5: '5 - Perfectly Aligned'
+        };
+
+        // Initialize sliders
+        document.addEventListener('DOMContentLoaded', function() {
+            areas.forEach(area => {
+                const slider = document.getElementById(area.id);
+                const valueDisplay = document.getElementById(`${area.id}-value`);
+                
+                slider.addEventListener('input', function() {
+                    valueDisplay.textContent = scoreLabels[this.value];
+                    updateSliderColor(this);
+                });
+                
+                updateSliderColor(slider);
+            });
+            
+            updateDashboard();
+        });
+
+        function updateSliderColor(slider) {
+            const value = slider.value;
+            const colors = {
+                1: '#ef4444',
+                2: '#f59e0b', 
+                3: '#10b981',
+                4: '#059669',
+                5: '#047857'
+            };
+            slider.style.background = `linear-gradient(to right, #ef4444, #f59e0b, #10b981, #059669, #047857)`;
+        }
+
+        function submitAlignment() {
+            const today = new Date().toISOString().split('T')[0];
+            
+            // Check if already submitted today
+            const existingEntry = alignmentData.find(entry => entry.date === today);
+            if (existingEntry) {
+                if (!confirm('You already have an entry for today. Do you want to update it?')) {
+                    return;
+                }
+                // Remove existing entry
+                const index = alignmentData.findIndex(entry => entry.date === today);
+                alignmentData.splice(index, 1);
+            }
+
+            const entry = {
+                date: today,
+                timestamp: new Date().toISOString(),
+                scores: {},
+                reflections: {}
+            };
+
+            areas.forEach(area => {
+                const slider = document.getElementById(area.id);
+                const reflection = document.getElementById(`${area.id}-reflection`);
+                
+                entry.scores[area.id] = parseInt(slider.value);
+                entry.reflections[area.id] = reflection.value.trim();
+            });
+
+            alignmentData.push(entry);
+            localStorage.setItem('alignmentData', JSON.stringify(alignmentData));
+
+            // Show success message
+            const successMessage = document.getElementById('successMessage');
+            successMessage.classList.add('show');
+            
+            // Clear form
+            areas.forEach(area => {
+                document.getElementById(area.id).value = 3;
+                document.getElementById(`${area.id}-value`).textContent = '3 - Neutral';
+                document.getElementById(`${area.id}-reflection`).value = '';
+            });
+
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+
+            updateDashboard();
+        }
+
+        function showDashboard() {
+            document.getElementById('alignmentForm').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            updateDashboard();
+            createChart();
+        }
+
+        function goBackToForm() {
+            document.getElementById('alignmentForm').style.display = 'block';
+            document.getElementById('dashboard').classList.remove('active');
+        }
+
+        function updateDashboard() {
+            if (alignmentData.length === 0) return;
+
+            // Calculate stats
+            const totalEntries = alignmentData.length;
+            const allScores = alignmentData.flatMap(entry => Object.values(entry.scores));
+            const averageAlignment = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+
+            // Find strongest and weakest areas
+            const areaAverages = {};
+            areas.forEach(area => {
+                const areaScores = alignmentData.map(entry => entry.scores[area.id]).filter(score => score);
+                if (areaScores.length > 0) {
+                    areaAverages[area.id] = areaScores.reduce((a, b) => a + b, 0) / areaScores.length;
+                }
+            });
+
+            const sortedAreas = Object.entries(areaAverages).sort(([,a], [,b]) => b - a);
+            const strongestArea = sortedAreas[0] ? areas.find(a => a.id === sortedAreas[0][0]).name : '-';
+            const improvementArea = sortedAreas[sortedAreas.length - 1] ? areas.find(a => a.id === sortedAreas[sortedAreas.length - 1][0]).name : '-';
+
+            // Update stats display
+            document.getElementById('totalEntries').textContent = totalEntries;
+            document.getElementById('averageAlignment').textContent = averageAlignment.toFixed(1);
+            document.getElementById('highestArea').textContent = strongestArea;
+            document.getElementById('improvementArea').textContent = improvementArea;
+
+            // Update recent entries
+            updateRecentEntries();
+        }
+
+        function updateRecentEntries() {
+            const container = document.getElementById('recentEntriesList');
+            
+            if (alignmentData.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #718096; font-style: italic;">No entries yet. Complete your first alignment check-in above!</p>';
+                return;
+            }
+
+            const recentEntries = alignmentData.slice(-5).reverse();
+            
+            container.innerHTML = recentEntries.map(entry => {
+                const date = new Date(entry.date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                const scoresBadges = areas.map(area => {
+                    const score = entry.scores[area.id];
+                    return `<span class="score-badge score-${score}">${area.icon} ${score}</span>`;
+                }).join('');
+                
+                return `
+                    <div class="entry-item">
+                        <div class="entry-date">${date}</div>
+                        <div class="entry-scores">${scoresBadges}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function createChart() {
+            const ctx = document.getElementById('alignmentChart').getContext('2d');
+            
+            if (alignmentData.length === 0) return;
+
+            // Prepare data for last 7 entries or all if less than 7
+            const recentData = alignmentData.slice(-7);
+            const labels = recentData.map(entry => {
+                const date = new Date(entry.date);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+            });
+
+            const datasets = areas.map((area, index) => ({
+                label: area.name,
+                data: recentData.map(entry => entry.scores[area.id] || 0),
+                borderColor: [
+                    '#8B5CF6',
+                    '#EC4899', 
+                    '#F59E0B',
+                    '#10B981',
+                    '#3B82F6'
+                ][index],
+                backgroundColor: [
+                    'rgba(139, 92, 246, 0.1)',
+                    'rgba(236, 72, 153, 0.1)',
+                    'rgba(245, 158, 11, 0.1)',
+                    'rgba(16, 185, 129, 0.1)',
+                    'rgba(59, 130, 246, 0.1)'
+                ][index],
+                borderWidth: 3,
+                fill: false,
+                tension: 0.4
+            }));
+
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    const labels = ['', 'Out of Alignment', 'Somewhat Off', 'Neutral', 'Well Aligned', 'Perfectly Aligned'];
+                                    return labels[value] || value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function saveWeeklyReflection() {
+            const reflection = {
+                date: new Date().toISOString().split('T')[0],
+                helpful: document.getElementById('weeklyHelpful').value.trim(),
+                challenge: document.getElementById('weeklyChallenge').value.trim(),
+                focus: document.getElementById('weeklyFocus').value.trim()
+            };
+
+            weeklyReflections.push(reflection);
+            localStorage.setItem('weeklyReflections', JSON.stringify(weeklyReflections));
+
+            alert('Weekly reflection saved! This valuable insight will help guide your coaching sessions.');
+            
+            // Clear form
+            document.getElementById('weeklyHelpful').value = '';
+            document.getElementById('weeklyChallenge').value = '';
+            document.getElementById('weeklyFocus').value = '';
+        }
+
+        function downloadProgress() {
+            let report = "THE DESIRE FACTOR - WEEK 2 ALIGNMENT REPORT\n";
+            report += "=" + "=".repeat(55) + "\n\n";
+            report += "Generated: " + new Date().toLocaleDateString() + "\n\n";
+            
+            if (alignmentData.length === 0) {
+                report += "No alignment data recorded yet.\n";
+            } else {
+                // Summary stats
+                const allScores = alignmentData.flatMap(entry => Object.values(entry.scores));
+                const averageAlignment = allScores.reduce((a, b) => a + b, 0) / allScores.length;
+                
+                report += "SUMMARY STATISTICS\n";
+                report += "-".repeat(30) + "\n";
+                report += `Total Check-ins: ${alignmentData.length}\n`;
+                report += `Average Alignment: ${averageAlignment.toFixed(1)}/5\n`;
+                report += `Date Range: ${alignmentData[0].date} to ${alignmentData[alignmentData.length - 1].date}\n\n`;
+
+                // Area averages
+                report += "ALIGNMENT BY AREA\n";
+                report += "-".repeat(30) + "\n";
+                areas.forEach(area => {
+                    const areaScores = alignmentData.map(entry => entry.scores[area.id]).filter(score => score);
+                    if (areaScores.length > 0) {
+                        const average = areaScores.reduce((a, b) => a + b, 0) / areaScores.length;
+                        report += `${area.name}: ${average.toFixed(1)}/5\n`;
+                    }
+                });
+                
+                report += "\nDAILY ENTRIES\n";
+                report += "-".repeat(30) + "\n";
+                alignmentData.forEach(entry => {
+                    report += `\nDate: ${entry.date}\n`;
+                    areas.forEach(area => {
+                        report += `  ${area.name}: ${entry.scores[area.id]}/5\n`;
+                        if (entry.reflections[area.id]) {
+                            report += `    Note: ${entry.reflections[area.id]}\n`;
+                        }
+                    });
+                });
+            }
+
+            // Add weekly reflections
+            if (weeklyReflections.length > 0) {
+                report += "\n\nWEEKLY REFLECTIONS\n";
+                report += "-".repeat(30) + "\n";
+                weeklyReflections.forEach(reflection => {
+                    report += `\nWeek of: ${reflection.date}\n`;
+                    report += `What helped alignment: ${reflection.helpful}\n`;
+                    report += `Biggest challenge: ${reflection.challenge}\n`;
+                    report += `Focus for next week: ${reflection.focus}\n`;
+                });
+            }
+
+            report += "\n\nNEXT STEPS\n";
+            report += "-".repeat(30) + "\n";
+            report += "- Review patterns with your coach\n";
+            report += "- Focus on improving your lowest-scoring area\n";
+            report += "- Continue daily alignment check-ins\n";
+            report += "- Prepare for Week 3: The Principle of Focus\n\n";
+            
+            report += "Remember: Alignment is a practice, not a destination. Every moment offers a new opportunity to choose alignment with your desires.\n";
+
+            try {
+                const blob = new Blob([report], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Week2_Alignment_Report.txt';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                alert('✅ Alignment report downloaded successfully!');
+            } catch (error) {
+                alert('Download not available. Please copy your data manually from the dashboard.');
+            }
+        }
+    </script>
+</body>
+</html>
